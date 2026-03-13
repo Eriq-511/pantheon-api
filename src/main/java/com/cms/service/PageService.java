@@ -77,7 +77,7 @@ public class PageService {
 
         String slug = InputSanitizer.trimToNull(request.getSlug());
         String normalizedSlug = slug == null ? null : slug.trim().toLowerCase();
-        if (pageRepository.existsBySlugAndIdNotIgnoreCase(normalizedSlug, id)) {
+        if (pageRepository.existsBySlugIgnoreCaseAndIdNot(normalizedSlug, id)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "A page with slug '" + slug + "' already exists");
         }

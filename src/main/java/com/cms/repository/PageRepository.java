@@ -11,6 +11,6 @@ import com.cms.model.Page;
 public interface PageRepository extends JpaRepository<Page, Long> {
     Optional<Page> findBySlugIgnoreCase(String slug);
     boolean existsBySlugIgnoreCase(String slug);
-    boolean existsBySlugAndIdNotIgnoreCase(String slug, Long id);
+    boolean existsBySlugIgnoreCaseAndIdNot(String slug, Long id);
     java.util.List<Page> findByStatus(String status);
 }
