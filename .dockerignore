@@ -1,0 +1,27 @@
+# Compiled output – the builder stage re-compiles from source.
+target/
+
+# Git
+.git/
+.gitignore
+
+# IDE / editor files
+.idea/
+*.iml
+.vscode/
+*.class
+
+# Maven wrapper (only needed for local dev without Maven installed)
+.mvn/
+mvnw
+mvnw.cmd
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+
+# Windows batch helpers
+*.bat
+
+# Test output
+surefire-reports/

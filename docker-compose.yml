@@ -1,0 +1,117 @@
+services:
+
+  # ──────────────────────────────────────────────────────────
+  # PostgreSQL 16
+  # ──────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: pantheon
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cms_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cms_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ──────────────────────────────────────────────────────────
+  # PostgreSQL 16 (test DB)
+  # ──────────────────────────────────────────────────────────
+  postgres_test:
+    image: postgres:16-alpine
+    container_name: pantheon-test-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cms_test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d cms_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  # ──────────────────────────────────────────────────────────
+  # Pantheon CMS – Spring Boot backend
+  # ──────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pantheon-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      # ── DataSource ──────────────────────────────────────
+      # "postgres" is the service name above; Docker DNS
+      # resolves it inside the compose network.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cms_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: your_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+
+      # ── JPA ─────────────────────────────────────────────
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "false"
+
+      # ── JWT ─────────────────────────────────────────────
+      # Override with a real 256-bit+ secret in production.
+      JWT_SECRET: ${JWT_SECRET:-pantheon_docker_secret_key_minimum_256_bits_long_xxx}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+
+      # ── Cloudinary ───────────────────────────────────────
+      # Pass real values via a .env file or host env vars.
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-your_cloud_name}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-your_api_key}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-your_api_secret}
+
+      # ── Multipart ────────────────────────────────────────
+      SPRING_SERVLET_MULTIPART_ENABLED: "true"
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 5MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 6MB
+
+      # ── CORS ─────────────────────────────────────────────
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+
+      # ── Logging ──────────────────────────────────────────
+      LOGGING_LEVEL_COM_CMS: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+
+  # ──────────────────────────────────────────────────────────
+  # Test runner (executes Maven tests inside Docker)
+  # ──────────────────────────────────────────────────────────
+  backend_test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    depends_on:
+      postgres_test:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_test:5432/cms_test
+      SPRING_DATASOURCE_USERNAME: test
+      SPRING_DATASOURCE_PASSWORD: test
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+    command: ["mvn", "test", "--no-transfer-progress", "-B"]
+
+volumes:
+  postgres_data:
+  postgres_test_data:

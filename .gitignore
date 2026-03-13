@@ -1,0 +1,24 @@
+# Maven / Java build output
+/target/
+*.class
+
+# Logs
+*.log
+logs/
+
+# IDE / editor files
+.idea/
+*.iml
+.vscode/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Test output
+surefire-reports/

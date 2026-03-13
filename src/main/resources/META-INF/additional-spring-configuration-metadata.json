@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "HMAC-SHA secret key for signing JWTs. Must be at least 256 bits (32 chars) long."
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT token validity in milliseconds (e.g. 86400000 = 24 hours)."
+    },
+    {
+      "name": "cloudinary.cloud_name",
+      "type": "java.lang.String",
+      "description": "Cloudinary account cloud name."
+    },
+    {
+      "name": "cloudinary.api_key",
+      "type": "java.lang.String",
+      "description": "Cloudinary API key."
+    },
+    {
+      "name": "cloudinary.api_secret",
+      "type": "java.lang.String",
+      "description": "Cloudinary API secret."
+    },
+    {
+      "name": "cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed CORS origins (e.g. http://localhost:3000)."
+    }
+  ]
+}
