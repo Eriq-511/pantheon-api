@@ -1,0 +1,126 @@
+{
+  "info": {
+    "_postman_id": "pages-api-collection-001",
+    "name": "Pages API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://pantheon-api-22ig.onrender.com"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password\",\n  \"email\": \"admin@example.com\"\n}"},
+            "url": {"raw": "{{base_url}}/api/auth/register", "host": ["{{base_url}}"], "path": ["api", "auth", "register"]}
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password\"\n}"},
+            "url": {"raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"]}
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {"raw": "{{base_url}}/api/auth/logout", "host": ["{{base_url}}"], "path": ["api", "auth", "logout"]}
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{base_url}}/api/auth/me", "host": ["{{base_url}}"], "path": ["api", "auth", "me"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pages",
+      "item": [
+        {
+          "name": "Get All Pages",
+          "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/pages", "host": ["{{base_url}}"], "path": ["api", "pages"]}}
+        },
+        {
+          "name": "Create Page",
+          "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"title\": \"Sample Page\",\n  \"slug\": \"sample-page\",\n  \"content\": \"<p>This is a sample page.</p>\",\n  \"status\": \"published\"\n}"}, "url": {"raw": "{{base_url}}/api/pages", "host": ["{{base_url}}"], "path": ["api", "pages"]}}
+        },
+        {
+          "name": "Get Page By Slug",
+          "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/pages/:slug", "host": ["{{base_url}}"], "path": ["api", "pages", ":slug"], "variable": [{"key": "slug", "value": "sample-slug"}]}}
+        },
+        {
+          "name": "Get Page By ID",
+          "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/pages/id/:id", "host": ["{{base_url}}"], "path": ["api", "pages", "id", ":id"], "variable": [{"key": "id", "value": "1"}]}}
+        },
+        {
+          "name": "Update Page",
+          "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"title\": \"Updated Page\",\n  \"slug\": \"updated-page\",\n  \"content\": \"<p>Updated content.</p>\",\n  \"status\": \"published\"\n}"}, "url": {"raw": "{{base_url}}/api/pages/:id", "host": ["{{base_url}}"], "path": ["api", "pages", ":id"], "variable": [{"key": "id", "value": "1"}]}}
+        },
+        {
+          "name": "Delete Page",
+          "request": {"method": "DELETE", "header": [], "url": {"raw": "{{base_url}}/api/pages/:id", "host": ["{{base_url}}"], "path": ["api", "pages", ":id"], "variable": [{"key": "id", "value": "1"}]}}
+        }
+      ]
+    },
+    {
+      "name": "Menu",
+      "item": [
+        {"name": "Get All Menu Items", "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/menu", "host": ["{{base_url}}"], "path": ["api", "menu"]}}},
+        {"name": "Create Menu Item", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"title\": \"Sample Menu\",\n  \"url\": \"/sample\",\n  \"parentId\": null\n}"}, "url": {"raw": "{{base_url}}/api/menu", "host": ["{{base_url}}"], "path": ["api", "menu"]}}},
+        {"name": "Reorder Menu Items", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"order\": [1,2,3]\n}"}, "url": {"raw": "{{base_url}}/api/menu/reorder", "host": ["{{base_url}}"], "path": ["api", "menu", "reorder"]}}},
+        {"name": "Update Menu Item", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"title\": \"Updated Menu\",\n  \"url\": \"/updated\",\n  \"parentId\": null\n}"}, "url": {"raw": "{{base_url}}/api/menu/:id", "host": ["{{base_url}}"], "path": ["api", "menu", ":id"], "variable": [{"key": "id", "value": "1"}]}}},
+        {"name": "Delete Menu Item", "request": {"method": "DELETE", "header": [], "url": {"raw": "{{base_url}}/api/menu/:id", "host": ["{{base_url}}"], "path": ["api", "menu", ":id"], "variable": [{"key": "id", "value": "1"}]}}}
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {"name": "Get All Products", "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/products", "host": ["{{base_url}}"], "path": ["api", "products"]}}},
+        {"name": "Get Product By ID", "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/products/:id", "host": ["{{base_url}}"], "path": ["api", "products", ":id"], "variable": [{"key": "id", "value": "1"}]}}},
+        {"name": "Create Product", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Sample Product\",\n  \"price\": 10.0,\n  \"category\": \"sample\"\n}"}, "url": {"raw": "{{base_url}}/api/products", "host": ["{{base_url}}"], "path": ["api", "products"]}}},
+        {"name": "Update Product", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Updated Product\",\n  \"price\": 20.0,\n  \"category\": \"updated\"\n}"}, "url": {"raw": "{{base_url}}/api/products/:id", "host": ["{{base_url}}"], "path": ["api", "products", ":id"], "variable": [{"key": "id", "value": "1"}]}}},
+        {"name": "Update Product Image", "request": {"method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"imageUrl\": \"/images/sample.jpg\"\n}"}, "url": {"raw": "{{base_url}}/api/products/:id/image", "host": ["{{base_url}}"], "path": ["api", "products", ":id", "image"], "variable": [{"key": "id", "value": "1"}]}}},
+        {"name": "Delete Product", "request": {"method": "DELETE", "header": [], "url": {"raw": "{{base_url}}/api/products/:id", "host": ["{{base_url}}"], "path": ["api", "products", ":id"], "variable": [{"key": "id", "value": "1"}]}}}
+      ]
+    },
+    {
+      "name": "Images",
+      "item": [
+        {"name": "Get All Images", "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/images", "host": ["{{base_url}}"], "path": ["api", "images"]}}},
+        {"name": "Upload Image", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "multipart/form-data"}], "body": {"mode": "formdata", "formdata": [{"key": "file", "type": "file", "src": ""}, {"key": "altText", "type": "text", "value": "Sample image"}]}, "url": {"raw": "{{base_url}}/api/images/upload", "host": ["{{base_url}}"], "path": ["api", "images", "upload"]}}},
+        {"name": "Update Image", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"altText\": \"Updated alt text\"\n}"}, "url": {"raw": "{{base_url}}/api/images/:id", "host": ["{{base_url}}"], "path": ["api", "images", ":id"], "variable": [{"key": "id", "value": "1"}]}}},
+        {"name": "Delete Image", "request": {"method": "DELETE", "header": [], "url": {"raw": "{{base_url}}/api/images/:id", "host": ["{{base_url}}"], "path": ["api", "images", ":id"], "variable": [{"key": "id", "value": "1"}]}}}
+      ]
+    },
+    {
+      "name": "Site Analysis",
+      "item": [
+        {"name": "Analyze Site", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"url\": \"https://example.com\"\n}"}, "url": {"raw": "{{base_url}}/api/site-analysis", "host": ["{{base_url}}"], "path": ["api", "site-analysis"]}}}
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {"name": "Get Settings", "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/settings", "host": ["{{base_url}}"], "path": ["api", "settings"]}}},
+        {"name": "Update Settings", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"siteName\": \"My Site\",\n  \"footerText\": \"All rights reserved.\"\n}"}, "url": {"raw": "{{base_url}}/api/settings", "host": ["{{base_url}}"], "path": ["api", "settings"]}}}
+      ]
+    }
+  ]
+}

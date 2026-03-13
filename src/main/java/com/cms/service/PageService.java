@@ -31,7 +31,8 @@ public class PageService {
     }
 
     public PageResponse getPageBySlug(String slug) {
-        Page page = pageRepository.findBySlug(slug)
+        String normalizedSlug = slug == null ? null : slug.trim().toLowerCase();
+        Page page = pageRepository.findBySlugIgnoreCase(normalizedSlug)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Page not found with slug: " + slug));
         return toResponse(page);
@@ -47,14 +48,15 @@ public class PageService {
     @Transactional
     public PageResponse createPage(PageRequest request) {
         String slug = InputSanitizer.trimToNull(request.getSlug());
-        if (pageRepository.existsBySlug(slug)) {
+        String normalizedSlug = slug == null ? null : slug.trim().toLowerCase();
+        if (pageRepository.existsBySlugIgnoreCase(normalizedSlug)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "A page with slug '" + slug + "' already exists");
         }
 
         Page page = new Page();
         page.setTitle(InputSanitizer.normalizeWhitespaceToSingleSpaces(request.getTitle()));
-        page.setSlug(slug);
+        page.setSlug(normalizedSlug);
         page.setContent(InputSanitizer.sanitizePageHtml(request.getContent()));
 
         String status = InputSanitizer.trimToNull(request.getStatus());
@@ -74,13 +76,14 @@ public class PageService {
                         "Page not found with id: " + id));
 
         String slug = InputSanitizer.trimToNull(request.getSlug());
-        if (pageRepository.existsBySlugAndIdNot(slug, id)) {
+        String normalizedSlug = slug == null ? null : slug.trim().toLowerCase();
+        if (pageRepository.existsBySlugAndIdNotIgnoreCase(normalizedSlug, id)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "A page with slug '" + slug + "' already exists");
         }
 
         page.setTitle(InputSanitizer.normalizeWhitespaceToSingleSpaces(request.getTitle()));
-        page.setSlug(slug);
+        page.setSlug(normalizedSlug);
         page.setContent(InputSanitizer.sanitizePageHtml(request.getContent()));
         if (request.getStatus() != null) {
             page.setStatus(InputSanitizer.trimToNull(request.getStatus()));

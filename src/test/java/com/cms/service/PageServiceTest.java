@@ -1,17 +1,17 @@
 package com.cms.service;
 
-import com.cms.AbstractIntegrationTest;
-import com.cms.dto.PageRequest;
-import com.cms.dto.PageResponse;
-import com.cms.repository.PageRepository;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.cms.AbstractIntegrationTest;
+import com.cms.dto.PageRequest;
+import com.cms.dto.PageResponse;
+import com.cms.repository.PageRepository;
 
 class PageServiceTest extends AbstractIntegrationTest {
 
@@ -84,7 +84,7 @@ class PageServiceTest extends AbstractIntegrationTest {
         assertThat(result.getTitle()).isEqualTo("Blog");
         assertThat(result.getCreatedAt()).isNotNull();
         assertThat(result.getUpdatedAt()).isNotNull();
-        assertThat(pageRepository.existsBySlug("blog")).isTrue();
+        assertThat(pageRepository.existsBySlugIgnoreCase("blog")).isTrue();
     }
 
     @Test
@@ -115,8 +115,18 @@ class PageServiceTest extends AbstractIntegrationTest {
         assertThat(updated.getTitle()).isEqualTo("New Title");
         assertThat(updated.getSlug()).isEqualTo("new-slug");
         assertThat(updated.getStatus()).isEqualTo("published");
-        assertThat(pageRepository.existsBySlug("old-slug")).isFalse();
-        assertThat(pageRepository.existsBySlug("new-slug")).isTrue();
+        assertThat(pageRepository.existsBySlugIgnoreCase("old-slug")).isFalse();
+        assertThat(pageRepository.existsBySlugIgnoreCase("new-slug")).isTrue();
+    }
+
+    @Test
+    public void getPageBySlug_shouldBeCaseInsensitiveAndTrimmed() {
+        pageService.createPage(req("Case Test", "Case-Slug ", "Content", "published"));
+
+        // Should match regardless of case and whitespace
+        assertThat(pageService.getPageBySlug("case-slug").getTitle()).isEqualTo("Case Test");
+        assertThat(pageService.getPageBySlug("CASE-SLUG").getTitle()).isEqualTo("Case Test");
+        assertThat(pageService.getPageBySlug("  case-slug  ").getTitle()).isEqualTo("Case Test");
     }
 
     @Test
