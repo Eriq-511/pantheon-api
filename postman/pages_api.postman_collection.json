@@ -58,6 +58,10 @@
           "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/pages", "host": ["{{base_url}}"], "path": ["api", "pages"]}}
         },
         {
+          "name": "Get All Slugs (Debug)",
+          "request": {"method": "GET", "header": [], "url": {"raw": "{{base_url}}/api/pages/debug-slugs", "host": ["{{base_url}}"], "path": ["api", "pages", "debug-slugs"]}}
+        },
+        {
           "name": "Create Page",
           "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"title\": \"Sample Page\",\n  \"slug\": \"sample-page\",\n  \"content\": \"<p>This is a sample page.</p>\",\n  \"status\": \"published\"\n}"}, "url": {"raw": "{{base_url}}/api/pages", "host": ["{{base_url}}"], "path": ["api", "pages"]}}
         },

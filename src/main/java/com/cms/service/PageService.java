@@ -1,3 +1,4 @@
+
 package com.cms.service;
 
 import java.util.List;
@@ -16,6 +17,15 @@ import com.cms.util.InputSanitizer;
 
 @Service
 public class PageService {
+
+    /**
+     * Returns a list of all slugs for debug purposes.
+     */
+    public List<String> getAllSlugs() {
+        return pageRepository.findAll().stream()
+                .map(Page::getSlug)
+                .collect(Collectors.toList());
+    }
 
     private final PageRepository pageRepository;
 

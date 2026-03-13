@@ -48,7 +48,7 @@ public class PageController {
     }
 
     @GetMapping("/{slug}")
-        public ResponseEntity<ApiResponse<PageResponse>> getPageBySlug(
+    public ResponseEntity<ApiResponse<PageResponse>> getPageBySlug(
             @PathVariable
             @Pattern(
                 regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$",
@@ -78,5 +78,12 @@ public class PageController {
             @PathVariable @Positive(message = "Id must be a positive number") Long id) {
         pageService.deletePage(id);
         return ResponseEntity.ok(ApiResponse.ok(null, "Page deleted successfully"));
+    }
+
+    // Debug endpoint to list all slugs
+    @GetMapping("/debug-slugs")
+    public ResponseEntity<ApiResponse<List<String>>> getAllSlugs() {
+        List<String> slugs = pageService.getAllSlugs();
+        return ResponseEntity.ok(ApiResponse.ok(slugs));
     }
 }
