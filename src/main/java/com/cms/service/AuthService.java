@@ -81,11 +81,10 @@ public class AuthService {
     }
 
     private void setJwtCookie(HttpServletResponse response, String value, int maxAge) {
-        // Build the Set-Cookie header manually so we can include SameSite=Lax,
-        // which the jakarta.servlet.http.Cookie API does not support directly.
+        // Always set SameSite=None; Secure for cross-site cookie usage
         String cookieHeader = String.format(
-                "%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Lax%s",
-                JWT_COOKIE_NAME, value, maxAge, secureCookieFlag);
+            "%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=None; Secure",
+            JWT_COOKIE_NAME, value, maxAge);
         // Use addHeader (not setHeader) so we never clobber other Set-Cookie headers.
         response.addHeader("Set-Cookie", cookieHeader);
     }
