@@ -87,13 +87,13 @@ public class AuthService {
         cookie.setSecure(true); // Always true for cross-site
         cookie.setPath("/");
         cookie.setMaxAge(maxAge);
-        // Optionally set domain for cross-site cookies (adjust as needed):
-        // cookie.setDomain("pantheon-api-22ig.onrender.com");
+        // Set domain for cross-site cookies (adjust as needed):
+        cookie.setDomain(".vercel.app");
 
         // Java < 11 does not support SameSite directly, so we append it manually
         // This works for most servlet containers, but some proxies may strip it
         response.addHeader("Set-Cookie",
-            String.format("%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=None; Secure",
+            String.format("%s=%s; Max-Age=%d; Path=/; Domain=.vercel.app; HttpOnly; SameSite=None; Secure",
                 JWT_COOKIE_NAME, value, maxAge));
     }
 }
