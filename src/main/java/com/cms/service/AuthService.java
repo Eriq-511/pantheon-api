@@ -63,14 +63,16 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request, HttpServletResponse response) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, "Invalid username or password"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+        // Log for debugging
+        System.out.println("[AuthService] Logging in user: " + user.getUsername() + ", setting JWT: " + token);
         setJwtCookie(response, token, (int) (jwtUtil.getExpirationMs() / 1000));
 
         return new LoginResponse(user.getId(), user.getUsername(), user.getRole());
@@ -89,6 +91,7 @@ public class AuthService {
 
     private void setJwtCookie(HttpServletResponse response, String value, int maxAge) {
         // Use ResponseCookie for proper cross-site cookie settings
+        // Always overwrite any existing cookie
         ResponseCookie cookie = ResponseCookie.from(JWT_COOKIE_NAME, value)
             .httpOnly(true)
             .secure(true)
@@ -97,6 +100,7 @@ public class AuthService {
             .path("/")
             .maxAge(Duration.ofSeconds(maxAge))
             .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString()); // Overwrite any previous cookie
+        System.out.println("[AuthService] Set JWT cookie: " + cookie.toString());
     }
 }
