@@ -14,6 +14,7 @@ import com.cms.model.User;
 import com.cms.repository.UserRepository;
 import com.cms.security.JwtUtil;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Service
@@ -81,11 +82,18 @@ public class AuthService {
     }
 
     private void setJwtCookie(HttpServletResponse response, String value, int maxAge) {
-        // Always set SameSite=None; Secure for cross-site cookie usage
-        String cookieHeader = String.format(
-            "%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=None; Secure",
-            JWT_COOKIE_NAME, value, maxAge);
-        // Use addHeader (not setHeader) so we never clobber other Set-Cookie headers.
-        response.addHeader("Set-Cookie", cookieHeader);
+        Cookie cookie = new Cookie(JWT_COOKIE_NAME, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // Always true for cross-site
+        cookie.setPath("/");
+        cookie.setMaxAge(maxAge);
+        // Optionally set domain for cross-site cookies (adjust as needed):
+        // cookie.setDomain("pantheon-api-22ig.onrender.com");
+
+        // Java < 11 does not support SameSite directly, so we append it manually
+        // This works for most servlet containers, but some proxies may strip it
+        response.addHeader("Set-Cookie",
+            String.format("%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=None; Secure",
+                JWT_COOKIE_NAME, value, maxAge));
     }
 }
