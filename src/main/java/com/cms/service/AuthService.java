@@ -1,8 +1,11 @@
 package com.cms.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,7 +17,6 @@ import com.cms.model.User;
 import com.cms.repository.UserRepository;
 import com.cms.security.JwtUtil;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Service
@@ -82,18 +84,15 @@ public class AuthService {
     }
 
     private void setJwtCookie(HttpServletResponse response, String value, int maxAge) {
-        Cookie cookie = new Cookie(JWT_COOKIE_NAME, value);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Always true for cross-site
-        cookie.setPath("/");
-        cookie.setMaxAge(maxAge);
-        // Set domain for cross-site cookies (adjust as needed):
-        cookie.setDomain(".vercel.app");
-
-        // Java < 11 does not support SameSite directly, so we append it manually
-        // This works for most servlet containers, but some proxies may strip it
-        response.addHeader("Set-Cookie",
-            String.format("%s=%s; Max-Age=%d; Path=/; Domain=.vercel.app; HttpOnly; SameSite=None; Secure",
-                JWT_COOKIE_NAME, value, maxAge));
+        // Use ResponseCookie for proper cross-site cookie settings
+        ResponseCookie cookie = ResponseCookie.from(JWT_COOKIE_NAME, value)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .domain(".vercel.app") // Ensures cookie is sent to frontend
+                .path("/")
+                .maxAge(Duration.ofSeconds(maxAge))
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }
