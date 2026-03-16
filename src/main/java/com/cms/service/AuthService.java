@@ -3,6 +3,7 @@ package com.cms.service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -28,15 +29,18 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final String secureCookieFlag;
+    private final String cookieDomain;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        JwtUtil jwtUtil,
-                       @org.springframework.beans.factory.annotation.Value("${server.secure-cookie:false}") boolean secureCookie) {
+                       @Value("${server.secure-cookie:false}") boolean secureCookie,
+                       @Value("${COOKIE_DOMAIN:.vercel.app}") String cookieDomain) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.secureCookieFlag = secureCookie ? "; Secure" : "";
+        this.cookieDomain = cookieDomain;
     }
 
     public LoginResponse register(RegisterRequest request) {
@@ -86,13 +90,13 @@ public class AuthService {
     private void setJwtCookie(HttpServletResponse response, String value, int maxAge) {
         // Use ResponseCookie for proper cross-site cookie settings
         ResponseCookie cookie = ResponseCookie.from(JWT_COOKIE_NAME, value)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None")
-                .domain(".vercel.app") // Ensures cookie is sent to frontend
-                .path("/")
-                .maxAge(Duration.ofSeconds(maxAge))
-                .build();
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .domain(cookieDomain) // Use env/config value
+            .path("/")
+            .maxAge(Duration.ofSeconds(maxAge))
+            .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }

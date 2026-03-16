@@ -23,8 +23,8 @@ public class CorsConfig {
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Apply CORS config only to /api/** endpoints
-        source.registerCorsConfiguration("/api/**", config);
+        // Apply CORS config to all endpoints
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }
