@@ -96,7 +96,7 @@ public class AuthService {
             .httpOnly(true)
             .secure(true)
             .sameSite("None")
-            .domain(cookieDomain) // Use env/config value
+            // .domain(cookieDomain) // Removed: let browser default to API host
             .path("/")
             .maxAge(Duration.ofSeconds(maxAge))
             .build();
