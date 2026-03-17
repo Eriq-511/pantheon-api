@@ -40,9 +40,17 @@ public class JwtFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = extractTokenFromCookie(request);
-        if (token != null) {
-            System.out.println("[JwtFilter] JWT cookie found: " + token);
+        // Try to extract JWT from Authorization header first (Bearer token), then fallback to cookie
+        String token = null;
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+            System.out.println("[JwtFilter] JWT found in Authorization header: " + token);
+        } else {
+            token = extractTokenFromCookie(request);
+            if (token != null) {
+                System.out.println("[JwtFilter] JWT cookie found: " + token);
+            }
         }
 
         if (token != null && jwtUtil.validateToken(token)) {
