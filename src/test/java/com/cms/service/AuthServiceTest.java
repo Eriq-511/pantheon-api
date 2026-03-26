@@ -67,7 +67,7 @@ class AuthServiceTest extends AbstractIntegrationTest {
         String setCookie = response.getHeader("Set-Cookie");
         assertThat(setCookie).contains("jwt=");
         assertThat(setCookie).contains("HttpOnly");
-        assertThat(setCookie).contains("SameSite=Lax");
+        assertThat(setCookie).contains("SameSite=None");
         assertThat(setCookie).doesNotContain("Max-Age=0");
     }
 
